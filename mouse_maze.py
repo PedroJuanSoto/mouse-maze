@@ -14,7 +14,7 @@ class cell:
 		self.s = s
 		self.m = 1 if m == True else 0
 
-	def cell_string(self):
+	def cell_h_string(self):
 		w = '#'
 		x = 'X'
 		b = ' '
@@ -35,9 +35,16 @@ class cell:
 	def r_string(self,i):
 		row_string = ""
 		for j in range(3):
-			row_string += self.cell_string()[i][j]
+			row_string += self.cell_h_string()[i][j]
 		return row_string
 
+	def cell_string(self):
+		string = ""
+		for i in range(3):
+			string += self.r_string(i)
+			string += '\n'
+		return string
+			
 	def hor_adj(self, cell):
 		return self.c[1] == '1' and cell.c[3] == '1'
 
@@ -76,26 +83,35 @@ class maze:
 				if self.cells[i][j].ver_adj(self.cells[i+1][j]):
 					self.adj_gra[i*m+j][i*m+j+m] = 1
 					self.adj_gra[i*m+j+m][i*m+j] = 1
+		for i in range(1,n):
+			for j in range(1,m):
+				if self.cells[i][j-1].hor_adj(self.cells[i][j]):
+					self.adj_gra[i*m+j][i*m+j-1] = 1
+					self.adj_gra[i*m+j-1][i*m+j] = 1
+				if self.cells[i-1][j].ver_adj(self.cells[i][j]):
+					self.adj_gra[i*m+j][i*m+j-m] = 1
+					self.adj_gra[i*m+j-m][i*m+j] = 1
 
 	def slide_row(self,i):
-		new_row = []
-		new_row.append(self.cells[i][self.m-1])
-		for j in range(1,self.m):
-			new_row.append(self.cells[i][j])
-		self.cells[i] = new_row	
-		self.move_mouse(self.mouse[0],(self.mouse[1]+1)%self.m)
-		self.update_graph()
+		new_head = self.cells[i][self.m-1]
+		new_buffer = self.cells[i][0] 
+		self.cells[i][self.m-1] = self.cells[i][self.m-2]
+		for j in range(self.m-1):
+			self.cells[i][j] = new_head
+			new_head = new_buffer
+			new_buffer = self.cells[i][j+1] 
+		self.mouse = (self.mouse[0],(self.mouse[1]+1)%self.m)
 		self.update_reachable()
 
 	def slide_col(self,j):
-		new_col = []
-		new_col.append(self.cells[self.m-1][j])
-		for i in range(1,self.n):
-			new_col.append(self.cells[i][j])
-		for i in range(self.n):
-			self.cells[i][j] = new_col[i]
-		self.move_mouse((self.mouse[0]+1)%self.n,self.mouse[1])
-		self.update_graph()
+		new_head = self.cells[self.n-1][j]
+		new_buffer = self.cells[0][j] 
+		self.cells[self.n-1][j] = self.cells[self.n-2][j]
+		for i in range(self.n-1):
+			self.cells[i][j] = new_head
+			new_head = new_buffer
+			new_buffer = self.cells[i+1][j] 
+		self.mouse = ((self.mouse[1]+1)%self.n,self.mouse[0])
 		self.update_reachable()
 
 	def move_mouse(self, i,j):
@@ -110,6 +126,7 @@ class maze:
 		self.update_reachable()
 
 	def update_reachable(self):
+		self.update_graph()
 		self.reachable = set()
 		i = self.mouse[0]
 		j = self.mouse[1]
@@ -125,7 +142,32 @@ class maze:
 		if (i,j) in self.reachable:
 			self.reachable.remove((i,j))
 				
-		
+	def legal_move(self, s):
+		if len(s) != 2:
+			return False
+		elif s[0] == 'r' or s[0] == 'R':
+			if int(s[1]) < self.n: 
+				return True	
+			else:
+				return False
+		elif s[0] == 'c' or s[0] == 'C':
+			if int(s[1]) < self.m: 
+				return True	
+			else:
+				return False
+		elif (int(s[0]), int(s[1])) in self.reachable:
+			return True 
+		else:
+			return False
+
+	def play(self, s):
+		if s[0] == 'r' or s[0] == 'R':
+			self.slide_row(int(s[1]))
+		elif s[0] == 'c' or s[0] == 'C':
+			self.slide_col(int(s[1]))
+		else:
+			self.move_mouse(int(s[0]), int(s[1]))
+
 	def maze_string(self):
 		string = ""
 		for row in self.cells:
@@ -138,42 +180,39 @@ class maze:
 		return string		
 						
 					
-n = 4
-m = n
-#s  = "9182df2ec797b9c88df0af877be505daa6f6575a3cf4c5623"
-#s  = "9afde5e326d7e2dd"
-#s  = "65dd9ac3e53d7aaa7aac39ea399a57cc6aa9393ac5399399a"
-s  = "65dd9ac3da7aac39a"
-ma = maze(n,m,s,(0,0))
-print(ma.reachable)
-print(ma.maze_string())
-print(ma.mouse)
-print(ma.adj_gra)
-ma.slide_row(0)
-print(ma.reachable)
-print(ma.maze_string())
-print(ma.mouse)
-print(ma.adj_gra)
-ma.slide_row(0)
-print(ma.reachable)
-print(ma.maze_string())
-print(ma.mouse)
-print(ma.adj_gra)
-ma.slide_col(1)
-print(ma.reachable)
-print(ma.maze_string())
-print(ma.mouse)
-print(ma.adj_gra)
-ma.move_mouse(n-2,2)
-print(ma.reachable)
-print(ma.maze_string())
-print(ma.mouse)
-print(ma.adj_gra)
-
-#for row in ma.cells:
-#	for cell in row:
-#		print(cell.c)
-#		print(cell.cell_string())
-#		for i in range(3):
-#			print(cell.r_string(i))
+print("Welcome to mouse maze")
+print("Would you like to play the 7-game or the 10-game")
+game_size = int(input())
+if game_size == 7 :
+	n = 7
+	m = 7
+	number_of_moves = 6
+	s  = "65dd9ac3e53d7aaa7aac39ea399a57cc6aa9393ac5399399a"
+	mz = maze(n,m,s,(0,0))
+elif game_size == 10:
+	n = 10 
+	m = 10
+	number_of_moves = 14
+	s  = "7e3593b53ec55e9e7a6ec759e9a66cb35ea9639c753c356633599336a5a97599556a9c6aa553cc6355a3da56aa693aaae3c9"
+	mz = maze(n,m,s,(0,0))
+else:
+	print("Invalid Game Size")
+border = "-" * 50
+for t in range(number_of_moves):
+	print(border)
+	print("You have", number_of_moves - t, "moves remaining")
+	print("This is your current position")
+	print("mouse =", mz.mouse)
+	print(mz.maze_string())
+	print("Your valid moves are 'rX', 'cX', or 'YZ'")
+	print("where X <", n," and (Y,Z) are in:")
+	print(mz.reachable) 
+	move = input()
+	if mz.legal_move(move) == True:
+		mz.play(move)
+	else:	
+		print("Invalid Move")
+	print(border)
+	
+	
 
