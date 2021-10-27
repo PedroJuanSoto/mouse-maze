@@ -245,9 +245,12 @@ print("You have", number_of_moves - t, "moves remaining")
 print("This is your current position")
 print("mouse =", mz.mouse)
 print(mz.maze_string())
-if mz.mouse == (n,m):
+if mz.mouse == (n-1,m-1):
 	print("Congrulations!")
 	print("You won")	
+	f = open("moves.txt", "a")
+	f.write(str(moves)+'\n')
+	f.close()
 else:
 	print("Game Over")
 	print("You Lost")
