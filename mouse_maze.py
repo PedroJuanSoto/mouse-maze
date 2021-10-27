@@ -14,14 +14,22 @@ class cell:
 		self.s = s
 		self.m = 1 if m == True else 0
 
+	def flip_mouse(self):
+		if self.m == 1:
+			self.m = 0	
+		else:
+			self.m = 1	
+
 	def cell_h_string(self):
 		w = '#'
-		x = 'X'
 		b = ' '
+		x = 'X'
+		v = '|'
+		h = '-'
 		if self.m == 1:
-			cell_string = [[w,w,w],[w,x,w],[w,w,w]]
+			cell_string = [[w,h,w],[v,x,v],[w,h,w]]
 		else:
-			cell_string = [[w,w,w],[w,b,w],[w,w,w]]	
+			cell_string = [[w,h,w],[v,b,v],[w,h,w]]	
 		if self.c[3] == '1':
 			cell_string[1][0] = b
 		if self.c[2] == '1':
@@ -100,7 +108,8 @@ class maze:
 			self.cells[i][j] = new_head
 			new_head = new_buffer
 			new_buffer = self.cells[i][j+1] 
-		self.mouse = (self.mouse[0],(self.mouse[1]+1)%self.m)
+		if self.mouse[0] == i:
+			self.mouse = (self.mouse[0],(self.mouse[1]+1)%self.m)
 		self.update_reachable()
 
 	def slide_col(self,j):
@@ -111,18 +120,16 @@ class maze:
 			self.cells[i][j] = new_head
 			new_head = new_buffer
 			new_buffer = self.cells[i+1][j] 
-		self.mouse = ((self.mouse[1]+1)%self.n,self.mouse[0])
+		if self.mouse[1] == j:
+			self.mouse = ((self.mouse[1]+1)%self.n,self.mouse[0])
 		self.update_reachable()
 
 	def move_mouse(self, i,j):
 		k  =  self.mouse[0]
 		l  =  self.mouse[1]
 		self.mouse = (i,j)
-		c1 = cell(self.s[i*self.n+j], (i,j)==self.mouse)
-		c2 = cell(self.s[k*self.n+l], (k,l)==self.mouse)
-		self.cells[i][j] = c1	
-		self.cells[k][l] = c2	
-		self.update_graph()
+		self.cells[i][j].flip_mouse() 
+		self.cells[k][l].flip_mouse() 
 		self.update_reachable()
 
 	def update_reachable(self):
@@ -213,6 +220,16 @@ for t in range(number_of_moves):
 	else:	
 		print("Invalid Move")
 	print(border)
-	
+	print(border)
+print("You have", number_of_moves - t, "moves remaining")
+print("This is your current position")
+print("mouse =", mz.mouse)
+print(mz.maze_string())
+if mz.mouse == (n,m):
+	print("Congrulations!")
+	print("You won")	
+else:
+	print("Game Over")
+	print("You Lost")
 	
 
