@@ -60,12 +60,13 @@ class cell:
 		return self.c[2] == '1' and cell.c[0] == '1'
 
 class maze:
+	cells   = []
+
 	def __init__(self, n, m, s, mouse):
 		self.n = n
 		self.m = m
 		self.g = 0
 		self.s = s
-		self.cells = []
 		self.mouse = mouse
 		for i in range(n):
 			new_row = []
@@ -120,7 +121,7 @@ class maze:
 			new_head = new_buffer
 			new_buffer = self.cells[i+1][j] 
 		if self.mouse[1] == j:
-			self.mouse = ((self.mouse[0]+1)%self.n,self.mouse[1])
+			self.mouse = ((self.mouse[1]+1)%self.n,self.mouse[0])
 		self.update_reachable()
 
 	def move_mouse(self, i,j):
@@ -213,33 +214,24 @@ else:
 	print("Invalid Game Size")
 border = "-" * 50
 t = 0
-moves = []
-positions = []
-mouses = []
+checker = mz.s + '\n'
 while t < number_of_moves:
 	print(border)
 	print("You have", number_of_moves - t, "moves remaining")
 	print("This is your current position")
 	print("mouse =", mz.mouse)
 	print(mz.maze_string())
-	print("Your valid moves are 'rX', 'cX', 'YZ', or 'gb'")
+	print("Your valid moves are 'rX', 'cX', or 'YZ'")
 	print("where X <", n," and (Y,Z) are in:")
 	print(mz.reachable) 
 	move = input()
-	if move == 'gb' and t>0:
-		new = maze(n,m,positions.pop(),mouses.pop())
-		mz  = new
-		moves.pop()
-		t = t-1
-	elif mz.legal_move(move) == True:
-		moves.append(move)
-		positions.append(mz.s)
-		mouses.append(mz.mouse)
+	if mz.legal_move(move) == True:
 		mz.play(move)
 		t = t+1
 	else:	
 		print("Invalid Move")
 	print(border)
+	checker += mz.s + '\n'
 print(border)
 print("You have", number_of_moves - t, "moves remaining")
 print("This is your current position")
@@ -252,4 +244,4 @@ else:
 	print("Game Over")
 	print("You Lost")
 	
-
+print(checker)
