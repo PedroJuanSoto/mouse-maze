@@ -149,21 +149,24 @@ class maze:
 		if (i,j) in self.reachable:
 			self.reachable.remove((i,j))
 				
-	def legal_move(self, s):
+	def legal_move(self, s, t):
 		if len(s) != 2:
 			return False
 		elif s[0] == 'r' or s[0] == 'R':
-			if int(s[1]) < self.n: 
+			if int(s[1]) < self.n and t%2 == 1: 
 				return True	
 			else:
 				return False
 		elif s[0] == 'c' or s[0] == 'C':
-			if int(s[1]) < self.m: 
+			if int(s[1]) < self.m and t%2 == 1: 
 				return True	
 			else:
 				return False
 		elif (int(s[0]), int(s[1])) in self.reachable:
-			return True 
+			if t%2 == 0: 
+				return True	
+			else:
+				return False
 		else:
 			return False
 
@@ -232,7 +235,7 @@ while t < number_of_moves:
 		mz  = new
 		moves.pop()
 		t = t-1
-	elif mz.legal_move(move) == True:
+	elif mz.legal_move(move, t) == True:
 		if move[0] == 'r' or move[0] == 'R' or move[0] == 'c' or move[0] == 'C': 
 			moves.append(move.upper())
 		else:
