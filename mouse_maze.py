@@ -227,18 +227,26 @@ while t < number_of_moves:
 	print("mouse =", mz.mouse)
 	print(mz.maze_string())
 	if t%2 == 0:
-		print("Your valid moves are 'YZ' or 'gb'")
-		print("where (Y,Z) are in:")
-		print(mz.reachable) 
+		if t == 0:
+			print("Your valid moves are 'YZ'")
+			print("where (Y,Z) are in:")
+			print(mz.reachable) 
+		else:
+			print("Your valid moves are 'YZ' or 'gb'")
+			print("where (Y,Z) are in:")
+			print(mz.reachable) 
 	else: 
 		print("Your valid moves are 'rX', 'cX', or 'gb'")
 		print("where X <", n)
 	move = input()
-	if move == 'gb' and t>0:
-		new = maze(n,m,positions.pop(),mouses.pop())
-		mz  = new
-		moves.pop()
-		t = t-1
+	if move == 'gb':
+		if t>0:
+			new = maze(n,m,positions.pop(),mouses.pop())
+			mz  = new
+			moves.pop()
+			t = t-1
+		else:
+			print("Invalid Move")
 	elif mz.legal_move(move, t) == True:
 		if move[0] == 'r' or move[0] == 'R' or move[0] == 'c' or move[0] == 'C': 
 			moves.append(move.upper())
