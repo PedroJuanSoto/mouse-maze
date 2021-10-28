@@ -203,13 +203,13 @@ game_size = int(input())
 if game_size == 7 :
 	n = 7
 	m = 7
-	number_of_moves = 2*6
+	number_of_moves = 6
 	s  = "65dd9ac3e53d7aaa7aac39ea399a57cc6aa9393ac5399399a"
 	mz = maze(n,m,s,(0,0))
 elif game_size == 10:
 	n = 10 
 	m = 10
-	number_of_moves = 2*14
+	number_of_moves = 14
 	s  = "7e3593b53ec55e9e7a6ec759e9a66cb35ea9639c753c356633599336a5a97599556a9c6aa553cc6355a3da56aa693aaae3c9"
 	mz = maze(n,m,s,(0,0))
 else:
@@ -259,6 +259,8 @@ while t < number_of_moves:
 	else:	
 		print("Invalid Move")
 	print(border)
+	if mz.mouse == (n-1,m-1):
+		break
 print(border)
 print("You have", number_of_moves - t, "moves remaining")
 print("This is your current position")
