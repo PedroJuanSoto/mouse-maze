@@ -211,6 +211,7 @@ elif game_size == 10:
 	mz = maze(n,m,s,(0,0))
 else:
 	print("Invalid Game Size")
+	exit()
 border = "-" * 50
 t = 0
 moves = []
@@ -232,7 +233,10 @@ while t < number_of_moves:
 		moves.pop()
 		t = t-1
 	elif mz.legal_move(move) == True:
-		moves.append(move)
+		if move[0] == 'r' or move[0] == 'R' or move[0] == 'c' or move[0] == 'C': 
+			moves.append(move.upper())
+		else:
+			moves.append((int(move[0]),int(move[1])))
 		positions.append(mz.s)
 		mouses.append(mz.mouse)
 		mz.play(move)
