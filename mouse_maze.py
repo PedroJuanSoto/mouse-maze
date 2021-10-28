@@ -203,13 +203,13 @@ game_size = int(input())
 if game_size == 7 :
 	n = 7
 	m = 7
-	number_of_moves = 6
+	number_of_moves = 2*6
 	s  = "65dd9ac3e53d7aaa7aac39ea399a57cc6aa9393ac5399399a"
 	mz = maze(n,m,s,(0,0))
 elif game_size == 10:
 	n = 10 
 	m = 10
-	number_of_moves = 14
+	number_of_moves = 2*14
 	s  = "7e3593b53ec55e9e7a6ec759e9a66cb35ea9639c753c356633599336a5a97599556a9c6aa553cc6355a3da56aa693aaae3c9"
 	mz = maze(n,m,s,(0,0))
 else:
@@ -226,9 +226,13 @@ while t < number_of_moves:
 	print("This is your current position")
 	print("mouse =", mz.mouse)
 	print(mz.maze_string())
-	print("Your valid moves are 'rX', 'cX', 'YZ', or 'gb'")
-	print("where X <", n," and (Y,Z) are in:")
-	print(mz.reachable) 
+	if t%2 == 0:
+		print("Your valid moves are 'YZ' or 'gb'")
+		print("where (Y,Z) are in:")
+		print(mz.reachable) 
+	else: 
+		print("Your valid moves are 'rX', 'cX', or 'gb'")
+		print("where X <", n)
 	move = input()
 	if move == 'gb' and t>0:
 		new = maze(n,m,positions.pop(),mouses.pop())
